@@ -6,7 +6,6 @@ export const http = axios.create({
   timeout: 10000,
 });
 
-// Intercepta requisições e injeta token
 http.interceptors.request.use(
   async (config) => {
     const { tokens } = useAuthStore.getState();
@@ -21,7 +20,6 @@ http.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Intercepta erros 401 e limpa auth
 http.interceptors.response.use(
   (response) => response,
   async (error) => {

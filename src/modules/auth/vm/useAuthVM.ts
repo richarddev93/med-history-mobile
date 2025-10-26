@@ -13,7 +13,7 @@ export function useAuthVM() {
     try {
       setLoading(true);
       const data = await authApi.login(email, password);
-      login(data.user, { accessToken: data.tokens.access, refreshToken: data.tokens.refresh });
+      login(data.user, { accessToken: data.accessToken, refreshToken: data.refreshToken });
     } catch (e: any) {
       setError(e.message);
     } finally {

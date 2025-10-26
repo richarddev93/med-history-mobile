@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+console.log('🧩 STORE carregada em:', new Date().toISOString());
 
 type Tokens = { accessToken: string; refreshToken: string };
 type User = { id: string; name: string; email: string };

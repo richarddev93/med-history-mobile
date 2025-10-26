@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { user } = useAuthStore();
+  const user = useAuthStore(s=> s.user);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

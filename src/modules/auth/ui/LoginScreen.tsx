@@ -41,7 +41,7 @@ export default function LoginScreen() {
             className="rounded-md border border-surface bg-card px-3 py-3 text-text"
             placeholder="Enter your password"
             placeholderTextColor="#95A5A6"
-            secureTextEntry
+            secureTextEntry={false}
             value={vm.password}
             onChangeText={vm.setPassword}
           />
@@ -58,6 +58,7 @@ export default function LoginScreen() {
           onPress={vm.handleLogin}
           disabled={!vm.canSubmit || vm.loading}
           className="bg-primary"
+          loading={vm.loading}
         />
       </View>
 
