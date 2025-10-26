@@ -1,0 +1,23 @@
+import React from 'react';
+import { ScrollView, View } from 'react-native';
+
+export default function Screen({
+  children,
+  scroll = true,
+  className = '',
+}: {
+  children: React.ReactNode;
+  scroll?: boolean;
+  className?: string;
+}) {
+  const Wrapper = scroll ? ScrollView : View;
+
+  return (
+      <Wrapper
+        className={`flex-1 px-4 pt-3  bg-bg ${className}`}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {children}
+      </Wrapper>
+  );
+}

@@ -1,6 +1,6 @@
 module.exports = function (api) {
   api.cache(true);
-  let plugins = [];
+  let plugins = [['module-resolver', { root: ['./'], alias: { '@': './src' } }]];
 
   plugins.push('react-native-worklets/plugin');
 
