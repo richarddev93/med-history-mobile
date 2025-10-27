@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 
 export default function Screen({
   children,
-  scroll = true,
+  scroll = false,
   className = '',
 }: {
   children: React.ReactNode;

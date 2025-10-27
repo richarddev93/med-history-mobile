@@ -10,7 +10,7 @@ export default function MedsListScreen() {
   useEffect(() => { fetchLogs(); }, []);
 
   return (
-    <Screen>
+    <Screen scroll={false}>
       <Text className="text-text text-xl font-semibold mb-3">Medication Logs</Text>
       <FlatList
         refreshing={loading}
