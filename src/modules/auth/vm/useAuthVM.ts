@@ -6,8 +6,8 @@ import { useMutation } from '@tanstack/react-query';
 
 export function useAuthVM() {
   const { login, setLoading, setError, loading } = useAuthStore();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('richardmachado.93@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   const canSubmit = useMemo(() => email.length > 3 && password.length >= 6, [email, password]);
 

@@ -14,7 +14,7 @@ export default function Screen({
 
   return (
       <Wrapper
-        className={`flex-1 px-4 pt-3  bg-bg ${className}`}
+        className={`flex-1 bg-bg ${className}`}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         {children}

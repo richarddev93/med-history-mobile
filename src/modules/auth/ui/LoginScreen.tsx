@@ -7,7 +7,7 @@ export default function LoginScreen() {
   const vm = useAuthVM();
 
   return (
-    <Screen className="p justify-center" scroll={false}>
+    <Screen className="px-8 justify-center" scroll={false}>
       <View className="mb-8 items-center">
         <Image
           source={require('../../../../assets/logo_horizontal.png')}
