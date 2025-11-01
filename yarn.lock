@@ -6567,6 +6567,7 @@ __metadata:
     react-native-safe-area-context: "npm:~5.6.0"
     react-native-screens: "npm:~4.16.0"
     react-native-worklets: "npm:0.5.1"
+    reactotron-react-native: "npm:^5.1.18"
     tailwindcss: "npm:^3.4.0"
     typescript: "npm:~5.9.2"
     zod: "npm:^4.1.12"
@@ -7259,6 +7260,13 @@ __metadata:
   dependencies:
     minipass: "npm:^7.1.2"
   checksum: 10c0/5aad75ab0090b8266069c9aabe582c021ae53eb33c6c691054a13a45db3b4f91a7fb1bd79151e6b4e9e9a86727b522527c0a06ec7d45206b745d54cd3097bcec
+  languageName: node
+  linkType: hard
+
+"mitt@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
   languageName: node
   linkType: hard
 
@@ -8392,6 +8400,34 @@ __metadata:
   version: 19.1.0
   resolution: "react@npm:19.1.0"
   checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
+  languageName: node
+  linkType: hard
+
+"reactotron-core-client@npm:2.9.9":
+  version: 2.9.9
+  resolution: "reactotron-core-client@npm:2.9.9"
+  dependencies:
+    reactotron-core-contract: "npm:0.3.2"
+  checksum: 10c0/50ecae82ddbc73ba0bd1e3d15e3cea6d84fcf8d8a1e39875f52db88156984c9489b97b479580f0744759ebbfb66142b8f37388a4a29860c8ee03e064d6c64354
+  languageName: node
+  linkType: hard
+
+"reactotron-core-contract@npm:0.3.2":
+  version: 0.3.2
+  resolution: "reactotron-core-contract@npm:0.3.2"
+  checksum: 10c0/c6c9e401964a97d225bbbfd9f306def33f1f67a6d9bfcb685b32331f19d111bfae7d73699e281a02fe30be44bbe707337cf7c3155cc04da4692c81a8eb1351fa
+  languageName: node
+  linkType: hard
+
+"reactotron-react-native@npm:^5.1.18":
+  version: 5.1.18
+  resolution: "reactotron-react-native@npm:5.1.18"
+  dependencies:
+    mitt: "npm:^3.0.1"
+    reactotron-core-client: "npm:2.9.9"
+  peerDependencies:
+    react-native: ">=0.40.0"
+  checksum: 10c0/d5819d12c79c5a6ad1a4d618c9a043819a49539991fd3df34210a46d9fc4a94f4eb30aa0c654424383d740fa7e748130d65d461a383e7dc6dde47ad7ace0b0a9
   languageName: node
   linkType: hard
 
