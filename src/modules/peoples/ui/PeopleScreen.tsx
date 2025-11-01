@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
-import { FlatList, Text, TextInput, TouchableHighlight, View, Image } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  TouchableHighlight,
+  TextInput,
+} from 'react-native';
+import { usePeopleStore } from '../store/usePeopleStore';
 import { Ionicons } from '@expo/vector-icons';
 
 import Screen from '@/components/ui/Screen';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { useMedsStore } from '../store/useMedStore';
-export default function PeopleScreen() {
-  const { logs, fetchLogs, removeLog, loading } = useMedsStore();
+import Card from '@/components/ui/Card';
 
-  const LOGS = [
-    {
-      id: '1',
-      item: '',
-    },
-  ];
+export function PeopleListScreen({ navigation }: any) {
+  const { list, loading, fetchPeople } = usePeopleStore();
+
   useEffect(() => {
-    fetchLogs();
+    fetchPeople();
   }, []);
 
   return (
@@ -30,35 +33,40 @@ export default function PeopleScreen() {
           <Ionicons name="person-outline" size={20} color={'white'} />
         </TouchableHighlight>
       </View>
-      <View className="px-4 py-6 justify-between gap-6">
-        <TextInput
-          className="rounded-md border border-surface bg-card px-3 py-3 text-text"
-          placeholder="Buscar..."
-          placeholderTextColor="#95A5A6"
+      <View className="flex-1">
+        <View className="justify-between gap-6 px-4 py-6">
+          <TextInput
+            className="rounded-md border border-surface bg-card px-3 py-3 text-text"
+            placeholder="Buscar..."
+            placeholderTextColor="#95A5A6"
+          />
+          <Button title="Adicionar membro" className="h-16" />
+        </View>
+
+        <FlatList
+          refreshing={loading}
+          data={list}
+          keyExtractor={(i) => i.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => navigation.navigate('PersonDetails', { id: item.id })}>
+              <Card className="mx-4 flex-row items-center gap-2">
+                <View className="items-center rounded-full">
+                  <Image
+                    source={require('../../../../assets/logo_horizontal.png')}
+                    className="h-16 w-16 rounded-full"
+                    resizeMode="cover"
+                  />
+                </View>
+                <View className="flex-1 items-start ">
+                  <Text className="text-xl font-bold text-text">{item.fullname}</Text>
+                  <Text className="text-lg text-muted">{item.document}</Text>
+                </View>
+                <Ionicons name="person" size={20} color={'white'} />
+              </Card>
+            </TouchableOpacity>
+          )}
         />
-        <Button title='Adicionar membro' className='h-16'/>
       </View>
-      <FlatList
-        refreshing={loading}
-        data={LOGS}
-        keyExtractor={(i) => i.id}
-        renderItem={({ item }) => (
-          <Card className="mx-4 flex-row items-center gap-2">
-            <View className="items-center rounded-full">
-              <Image
-                source={require('../../../../assets/logo_horizontal.png')}
-                className="h-16 w-16 rounded-full"
-                resizeMode="cover"
-              />
-            </View>
-            <View className="flex-1 items-start ">
-              <Text className="text-xl font-bold text-text">Melina</Text>
-              <Text className="text-lg text-muted">filha</Text>
-            </View>
-            <Ionicons name="person" size={20} color={'white'} />
-          </Card>
-        )}
-      />
     </Screen>
   );
 }
