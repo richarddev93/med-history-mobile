@@ -1,13 +1,14 @@
 
 import { create } from 'zustand';
 import { medicationsApi } from '../data/medications.api';
+import { CreateMedication, Medication } from '../schemas/medications.schema';
 
 interface MedicationsState {
-  medications: any[];
+  medications: Medication[];
   loading: boolean;
   error: string | null;
   getAllByPerson: (personId: string) => Promise<void>;
-  createMedication: (medication: any) => Promise<void>;
+  createMedication: (medication: CreateMedication) => Promise<void>;
 }
 
 export const useMedicationsVM = create<MedicationsState>((set) => ({

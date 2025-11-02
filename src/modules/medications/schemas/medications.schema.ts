@@ -12,6 +12,8 @@ export const CreateMedicationSchema = z.object({
   instructions: z.string().optional(),
 });
 
+export type CreateMedication = z.infer<typeof CreateMedicationSchema>;
+
 export const MedicationSchema = CreateMedicationSchema.extend({
   id: z.string(),
   personId: z.string(),

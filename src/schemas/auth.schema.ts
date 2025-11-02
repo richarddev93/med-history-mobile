@@ -1,27 +1,46 @@
+
 import { z } from 'zod';
 
-export const LoginSchema = z.object({
-  email: z.email('E-mail inválido'),
-  password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+export const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  name: z.string().optional(),
+});
+
+export const LoginResponseSchema = z.object({
+  user: UserSchema,
+  accessToken: z.string(),
+  refreshToken: z.string(),
 });
 
 export const TokenSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
-})
-
-export const LoginResponseSchema = z.object({
- ...TokenSchema.shape,
-  user: z.object({
-    id: z.string(),
-    email: z.string().email(),
-    name: z.string(),
-  }),
 });
 
-export type LoginData = z.infer<typeof LoginSchema>;
-export type LoginResponse = z.infer<typeof LoginResponseSchema>;
-export type RefreshSessionData = {
-  userId:LoginResponse['user']['id'];
-  refreshToken: LoginResponse['refreshToken'];
-};
+export const MeSchema = z.object({
+  sub: z.string(),
+  email: z.string().email(),
+  iat: z.number(),
+  exp: z.number(),
+});
+
+export const LoginDataSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
+export const RegisterDataSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+  name: z.string(),
+});
+
+export const RefreshSessionDataSchema = z.object({
+  userId: z.string(),
+  refreshToken: z.string(),
+});
+
+export type LoginData = z.infer<typeof LoginDataSchema>;
+export type RegisterData = z.infer<typeof RegisterDataSchema>;
+export type RefreshSessionData = z.infer<typeof RefreshSessionDataSchema>;

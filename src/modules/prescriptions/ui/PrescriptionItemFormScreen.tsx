@@ -1,43 +1,49 @@
 
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 import { usePrescriptionsVM } from '../vm/usePrescriptionsVM';
+import { CreateMedication } from '../../medications/schemas/medications.schema';
 
-export function PrescriptionItemFormScreen({ route, navigation }: any) {
+export function PrescriptionItemFormScreen({ navigation, route }: any) {
   const { prescriptionId } = route.params;
-  const { addItem, loading, error } = usePrescriptionsVM();
+  const { addItem, loading } = usePrescriptionsVM();
   const [name, setName] = useState('');
   const [doseValue, setDoseValue] = useState('');
   const [doseUnit, setDoseUnit] = useState('');
   const [frequencyEvery, setFrequencyEvery] = useState('');
   const [frequencyUnit, setFrequencyUnit] = useState('');
-  const [routeInstruction, setRouteInstruction] = useState('');
+  const [routeInput, setRouteInput] = useState('');
+  const [durationDays, setDurationDays] = useState('');
+  const [instructions, setInstructions] = useState('');
 
   const handleSave = async () => {
-    const item = {
+    const itemData: CreateMedication = {
       name,
-      doseValue: parseInt(doseValue),
+      doseValue: parseFloat(doseValue),
       doseUnit,
-      frequencyEvery: parseInt(frequencyEvery),
+      frequencyEvery: parseInt(frequencyEvery, 10),
       frequencyUnit,
-      route: routeInstruction,
+      route: routeInput,
+      durationDays: durationDays ? parseInt(durationDays, 10) : undefined,
+      instructions,
     };
-    await addItem(prescriptionId, item);
+
+    await addItem(prescriptionId, itemData);
     navigation.goBack();
   };
 
   return (
     <View>
-      <Text>Prescription Item Form Screen</Text>
-      <TextInput placeholder="Name" value={name} onChangeText={setName} />
-      <TextInput placeholder="Dose Value" value={doseValue} onChangeText={setDoseValue} keyboardType="numeric" />
-      <TextInput placeholder="Dose Unit" value={doseUnit} onChangeText={setDoseUnit} />
-      <TextInput placeholder="Frequency Every" value={frequencyEvery} onChangeText={setFrequencyEvery} keyboardType="numeric" />
-      <TextInput placeholder="Frequency Unit" value={frequencyUnit} onChangeText={setFrequencyUnit} />
-      <TextInput placeholder="Route" value={routeInstruction} onChangeText={setRouteInstruction} />
-      {loading && <Text>Saving...</Text>}
-      {error && <Text>{error}</Text>}
-      <Button title="Save" onPress={handleSave} />
+      <Text>Adicionar Medicamento na Prescrição</Text>
+      <TextInput placeholder="Nome" value={name} onChangeText={setName} />
+      <TextInput placeholder="Dosagem (valor)" value={doseValue} onChangeText={setDoseValue} keyboardType="numeric" />
+      <TextInput placeholder="Dosagem (unidade)" value={doseUnit} onChangeText={setDoseUnit} />
+      <TextInput placeholder="Frequência (a cada)" value={frequencyEvery} onChangeText={setFrequencyEvery} keyboardType="numeric" />
+      <TextInput placeholder="Frequência (unidade)" value={frequencyUnit} onChangeText={setFrequencyUnit} />
+      <TextInput placeholder="Via de administração" value={routeInput} onChangeText={setRouteInput} />
+      <TextInput placeholder="Duração (dias)" value={durationDays} onChangeText={setDurationDays} keyboardType="numeric" />
+      <TextInput placeholder="Instruções" value={instructions} onChangeText={setInstructions} />
+      <Button title="Salvar" onPress={handleSave} disabled={loading} />
     </View>
   );
 }

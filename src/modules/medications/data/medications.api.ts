@@ -1,18 +1,40 @@
 
 import { http } from '../../../lib/http';
-import { MedicationListSchema, CreateMedicationSchema } from './medications.schema';
+import {
+  MedicationListSchema,
+  CreateMedicationSchema,
+  MedicationSchema,
+  CreateMedication,
+} from './medications.schema';
 
 export const medicationsApi = {
   getAllByPerson: async (personId: string) => {
-    const response = await http.get(`/persons/${personId}/medication-logs`);
-    const parsed = MedicationListSchema.safeParse(response.data);
-    if (!parsed.success) {
-      throw new Error('Failed to parse medications');
+    try {
+      const response = await http.get(`/persons/${personId}/medications`);
+      const parsed = MedicationListSchema.safeParse(response.data);
+      if (!parsed.success) {
+        console.error(parsed.error);
+        throw new Error('Formato inesperado da resposta do servidor');
+      }
+      return parsed.data;
+    } catch (error: any) {
+      console.error('Get all by person error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Get all by person failed');
     }
-    return parsed.data;
   },
-  create: async (medication: any) => {
-    const response = await http.post('/medication-logs', medication);
-    return response.data;
+  create: async (medication: CreateMedication) => {
+    try {
+      const body = CreateMedicationSchema.parse(medication);
+      const response = await http.post('/medications', body);
+      const parsed = MedicationSchema.safeParse(response.data);
+      if (!parsed.success) {
+        console.error(parsed.error);
+        throw new Error('Formato inesperado da resposta do servidor');
+      }
+      return parsed.data;
+    } catch (error: any) {
+      console.error('Create medication error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Create medication failed');
+    }
   },
 };

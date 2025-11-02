@@ -1,26 +1,47 @@
+
 import { http } from '@/lib/http';
 import {
   LoginData,
   LoginResponseSchema,
   RefreshSessionData,
   TokenSchema,
+  RegisterData,
+  MeSchema,
 } from '@/schemas/auth.schema';
 import { AxiosError } from 'axios';
 
-const loginApi = async ({ email, password }: LoginData) => {
+const register = async (data: RegisterData) => {
+  try {
+    const response = await http.post('/auth/register', data);
+    const parsed = LoginResponseSchema.safeParse(response.data);
+    if (!parsed.success) {
+      console.error(parsed.error);
+      throw new Error('Formato inesperado da resposta do servidor');
+    }
+    return parsed.data;
+  } catch (error: any) {
+    if (error instanceof AxiosError) {
+      console.error(error.message);
+    } else {
+      console.error('Erro desconhecido:', error);
+    }
+    console.error('Register error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Register failed');
+  }
+};
+
+const login = async ({ email, password }: LoginData) => {
   try {
     const response = await http.post('/auth/login', {
       email,
       password,
     });
     const parsed = LoginResponseSchema.safeParse(response.data);
-    console.log(parsed);
     if (!parsed.success) {
       console.error(parsed.error);
       throw new Error('Formato inesperado da resposta do servidor');
     }
-
-    return response.data;
+    return parsed.data;
   } catch (error: any) {
     if (error instanceof AxiosError) {
       console.error(error.message);
@@ -40,9 +61,12 @@ const refreshSession = async ({ userId, refreshToken }: RefreshSessionData) => {
     });
 
     const parsed = TokenSchema.safeParse(response.data);
-    if (!parsed.success) console.error(parsed.error);
+    if (!parsed.success) {
+      console.error(parsed.error);
+      throw new Error('Formato inesperado da resposta do servidor');
+    }
 
-    return response.data;
+    return parsed.data;
   } catch (error: any) {
     console.error('Refresh session error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Refresh Session failed');
@@ -50,15 +74,36 @@ const refreshSession = async ({ userId, refreshToken }: RefreshSessionData) => {
 };
 
 const logout = async (userId: string) => {
-  const response = await http.post('auth/logout', {
-    userId,
-  });
+  try {
+    const response = await http.post('auth/logout', {
+      userId,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Logout error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Logout failed');
+  }
+};
 
-  return response.data;
+const getMe = async () => {
+  try {
+    const response = await http.get('/auth/me');
+    const parsed = MeSchema.safeParse(response.data);
+    if (!parsed.success) {
+      console.error(parsed.error);
+      throw new Error('Formato inesperado da resposta do servidor');
+    }
+    return parsed.data;
+  } catch (error: any) {
+    console.error('Get me error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Get me failed');
+  }
 };
 
 export const authApi = {
-  login: loginApi,
+  register,
+  login,
   refreshSession,
   logout,
+  getMe,
 };

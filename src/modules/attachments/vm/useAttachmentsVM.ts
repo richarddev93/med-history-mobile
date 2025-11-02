@@ -1,50 +1,52 @@
 
 import { create } from 'zustand';
 import { attachmentsApi } from '../data/attachments.api';
-import * as DocumentPicker from 'expo-document-picker';
+import { Attachment } from '../schemas/attachments.schema';
 
 interface AttachmentsState {
-  attachments: any[];
+  attachments: Attachment[];
   loading: boolean;
   error: string | null;
-  uploadAttachment: () => Promise<void>;
+  getAllByPerson: (personId: string) => Promise<void>;
+  createAttachment: (personId: string, file: any) => Promise<void>;
+  deleteAttachment: (attachmentId: string) => Promise<void>;
 }
 
-export const useAttachmentsVM = create<AttachmentsState>((set) => ({
+export const useAttachmentsVM = create<AttachmentsState>((set, get) => ({
   attachments: [],
   loading: false,
   error: null,
-  uploadAttachment: async () => {
+  getAllByPerson: async (personId) => {
     set({ loading: true, error: null });
     try {
-      const doc = await DocumentPicker.getDocumentAsync();
-
-      if (doc.canceled === false) {
-
-        const presignPayload = { filename: doc.assets[0].name, mimetype: doc.assets[0].mimeType, size: doc.assets[0].size };
-  
-        const { url, attachmentId } = await attachmentsApi.presign(presignPayload);
-  
-        const uploadResponse = await fetch(url, {
-          method: 'PUT',
-          body: doc.assets[0],
-          headers: {
-            'Content-Type': doc.assets[0].mimeType,
-          },
-        });
-  
-        if (!uploadResponse.ok) {
-          throw new Error('Upload failed');
-        }
-  
-        await attachmentsApi.confirm({ attachmentId });
-  
-        // TODO: Refresh attachment list
-      }
-
-      set({ loading: false });
+      const attachments = await attachmentsApi.getAllByPerson(personId);
+      set({ attachments, loading: false });
     } catch (error) {
-      set({ loading: false, error: 'Failed to upload attachment' });
+      set({ loading: false, error: 'Failed to fetch attachments' });
+    }
+  },
+  createAttachment: async (personId, file) => {
+    set({ loading: true, error: null });
+    try {
+      const newAttachment = await attachmentsApi.create(personId, file);
+      set((state) => ({
+        attachments: [...state.attachments, newAttachment],
+        loading: false,
+      }));
+    } catch (error) {
+      set({ loading: false, error: 'Failed to create attachment' });
+    }
+  },
+  deleteAttachment: async (attachmentId) => {
+    set({ loading: true, error: null });
+    try {
+      await attachmentsApi.remove(attachmentId);
+      set((state) => ({
+        attachments: state.attachments.filter((att) => att.id !== attachmentId),
+        loading: false,
+      }));
+    } catch (error) {
+      set({ loading: false, error: 'Failed to delete attachment' });
     }
   },
 }));

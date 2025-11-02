@@ -1,0 +1,169 @@
+==========================================
+MEDHISTORY - INSTRUÇÕES DE IMPLEMENTAÇÃO AUTOMÁTICA
+==========================================
+
+Contexto:
+O projeto MedHistory é um app React Native (Expo) com backend NestJS + Prisma + Postgres.
+O backend está pronto, e o frontend segue arquitetura modular com Zustand, React Query e Zod.
+
+O que já está implementado:
+- Autenticação completa (login, refresh, persistência, interceptors)
+- Módulo de Pessoas (Persons)
+- Módulo de Consultas (Encounters)
+- Módulo de Prescrições (Prescriptions)
+
+O que ainda falta está descrito abaixo.
+
+==========================================
+1. PENDÊNCIAS DE IMPLEMENTAÇÃO
+==========================================
+
+1.1 PRESCRIÇÕES (PRESCRIPTIONS)
+------------------------------------------
+Faltam as telas:
+- PrescriptionDetailsScreen.tsx
+- PrescriptionItemFormScreen.tsx
+
+PrescriptionDetailsScreen:
+  - Exibir lista de medicamentos (items)
+  - Mostrar campos notes e issuedAt
+  - Adicionar botão "Adicionar Medicamento"
+  - Navegar para PrescriptionItemFormScreen.tsx
+
+PrescriptionItemFormScreen:
+  - Campos: name, doseValue, doseUnit, frequencyEvery, frequencyUnit, route, durationDays, instructions
+  - Ao salvar, chamar prescriptionsApi.addItem(prescriptionId, item)
+
+==========================================
+1.2 MEDICATION LOGS (USO CONTÍNUO)
+------------------------------------------
+Backend endpoints disponíveis:
+POST /medication-logs
+GET /persons/:id/medication-logs
+
+Criar módulo:
+modules/medications/
+  data/medications.api.ts
+  schemas/medications.schema.ts
+  vm/useMedicationsVM.ts
+  ui/MedicationListScreen.tsx
+  ui/MedicationFormScreen.tsx
+
+Schema (medications.schema.ts):
+  - CreateMedicationSchema
+  - MedicationSchema
+  - MedicationListSchema
+
+API (medications.api.ts):
+  - getAllByPerson(personId)
+  - create(medication)
+
+UI:
+  - MedicationListScreen: lista medicamentos de um paciente + botão "Novo"
+  - MedicationFormScreen: formulário de criação
+
+==========================================
+1.3 ATTACHMENTS (ANEXOS E OCR FUTURO)
+------------------------------------------
+Backend endpoints:
+POST /attachments/presign
+POST /attachments/confirm
+
+Criar módulo:
+modules/attachments/
+  data/attachments.api.ts
+  schemas/attachments.schema.ts
+  vm/useAttachmentsVM.ts
+  ui/AttachmentListScreen.tsx
+  ui/AttachmentUploadScreen.tsx
+
+Funcionalidade esperada:
+  1. Upload de arquivo com expo-document-picker
+  2. Chamar /attachments/presign para obter URL
+  3. Enviar o arquivo (PUT)
+  4. Confirmar com /attachments/confirm
+  5. Exibir lista de anexos e status OCR (PENDING, DONE, FAILED)
+
+==========================================
+1.4 NAVEGAÇÃO
+------------------------------------------
+Adicionar as novas telas no AppNavigator:
+
+<Stack.Screen name="PrescriptionDetails" component={PrescriptionDetailsScreen} />
+<Stack.Screen name="PrescriptionItemForm" component={PrescriptionItemFormScreen} />
+<Stack.Screen name="MedicationList" component={MedicationListScreen} />
+<Stack.Screen name="MedicationForm" component={MedicationFormScreen} />
+<Stack.Screen name="AttachmentList" component={AttachmentListScreen} />
+<Stack.Screen name="AttachmentUpload" component={AttachmentUploadScreen} />
+
+==========================================
+1.5 MELHORIAS DE UX/UI
+------------------------------------------
+- Adicionar exibição de erro (error do VM) nas telas de formulário
+- Adicionar indicador de carregamento global
+- Mostrar alertas (Alert.alert) após salvar com sucesso
+- Integrar logs de ações no Reactotron
+
+==========================================
+1.6 OCR (FASE FUTURA)
+------------------------------------------
+- Adicionar botão "Reprocessar OCR" nos anexos
+- Status OCR vem do backend (ocrStatus, ocrText)
+- Exibir texto OCR quando processado
+
+==========================================
+2. REQUISITOS TÉCNICOS
+==========================================
+- Linguagem: TypeScript
+- Validação: Zod
+- Estado: Zustand
+- Persistência: AsyncStorage
+- Navegação: React Navigation (Stack + Tabs)
+- Lógica de rede: axios http client (lib/http.ts)
+- Logs e debug: Reactotron
+
+==========================================
+3. PADRÃO DE ARQUITETURA
+==========================================
+Cada módulo deve seguir a estrutura:
+modules/{nome}/
+  data/*.api.ts
+  schemas/*.schema.ts
+  vm/use{Nome}VM.ts
+  ui/{Nome}ListScreen.tsx
+  ui/{Nome}FormScreen.tsx
+
+As APIs devem:
+  - Validar responses com Zod (safeParse)
+  - Lançar erros amigáveis com mensagens descritivas
+  - Usar http de lib/http.ts (interceptores já configurados)
+
+==========================================
+4. INSTRUÇÕES PARA EXECUÇÃO AUTOMÁTICA (FIREBASE STUDIO)
+==========================================
+1. Ler este arquivo: todo-medhistory.txt
+2. Criar automaticamente os diretórios e arquivos listados
+3. Implementar o conteúdo seguindo os exemplos e contratos descritos
+4. Registrar as novas telas no AppNavigator
+5. Criar commits separados por módulo:
+   - feat: add prescriptions details module
+   - feat: add medication logs module
+   - feat: add attachments upload module
+   - chore: improve UX feedback in forms
+
+==========================================
+5. RESULTADO FINAL ESPERADO
+==========================================
+Após a execução das instruções, o app MedHistory deve permitir:
+
+- CRUD completo de Pessoas
+- Registro e visualização de Consultas (Encounters)
+- Prescrições detalhadas (com medicamentos)
+- Registro de uso contínuo (Medication Logs)
+- Upload de anexos e OCR futuro
+- Feedback visual de erros e sucesso
+- Logs no Reactotron integrados
+
+==========================================
+FIM DO ARQUIVO
+==========================================
