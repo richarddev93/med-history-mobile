@@ -30,6 +30,7 @@ export function useAuthVM() {
         return;
       }
       loginMutation.mutate(parsed.data);
+      console.log("loginnn")
 
       // const data = await authApi.login(email, password);
       // login(data.user, { accessToken: data.accessToken, refreshToken: data.refreshToken });

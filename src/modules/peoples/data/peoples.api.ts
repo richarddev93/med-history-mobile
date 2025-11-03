@@ -7,10 +7,12 @@ import {
   PersonSchema,
 } from '@/schemas/peoples.schema';
 
+
+const ENDPOINT = 'v1/person'
 export const peoplesApi = {
   async getAll() {
     try {
-      const response = await http.get('/persons');
+      const response = await http.get(ENDPOINT);
       const parsed = PersonListSchema.safeParse(response.data);
 
       if (!parsed.success) {
@@ -28,7 +30,7 @@ export const peoplesApi = {
 
   async getById(id: string) {
     try {
-      const response = await http.get(`/persons/${id}`);
+      const response = await http.get(`${ENDPOINT}/${id}`);
       const parsed = PersonSchema.safeParse(response.data);
 
       if (!parsed.success) {
@@ -47,7 +49,7 @@ export const peoplesApi = {
   async create(data: CreatePersonData) {
     try {
       const body = CreatePersonSchema.parse(data);
-      const response = await http.post('/persons', body);
+      const response = await http.post(ENDPOINT, body);
       const parsed = PersonSchema.safeParse(response.data);
 
       if (!parsed.success) {

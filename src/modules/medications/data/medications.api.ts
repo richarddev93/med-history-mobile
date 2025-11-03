@@ -1,11 +1,7 @@
 
 import { http } from '../../../lib/http';
-import {
-  MedicationListSchema,
-  CreateMedicationSchema,
-  MedicationSchema,
-  CreateMedication,
-} from './medications.schema';
+import { CreateMedication, CreateMedicationSchema, MedicationListSchema, MedicationSchema } from '../schemas/medications.schema';
+
 
 export const medicationsApi = {
   getAllByPerson: async (personId: string) => {

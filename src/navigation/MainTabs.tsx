@@ -5,6 +5,7 @@ import { PeopleListScreen } from '@/modules/peoples/ui/PeopleScreen';
 import { PeopleFormScreen } from '@/modules/peoples/ui/PeopleFormScreen';
 import { PrescriptionNavigator } from './PrescriptionNavigator';
 import { MedicationNavigator } from './MedicationNavigator';
+import { PersonDetailsScreen } from '@/modules/peoples/ui/PeopleDetailsScreen';
 
 const Tab = createBottomTabNavigator();
 
