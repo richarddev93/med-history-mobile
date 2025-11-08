@@ -5,9 +5,9 @@ import { z } from 'zod';
 
 const EncounterListSchema = z.array(EncounterSchema);
 
-const create = async (data: CreateEncounterData) => {
+const createEncounter = async (data: CreateEncounterData) => {
   try {
-    const response = await http.post('/encounters', data);
+    const response = await http.post('/v1/encounter', data);
     const parsed = EncounterSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error(parsed.error);
@@ -22,7 +22,7 @@ const create = async (data: CreateEncounterData) => {
 
 const getByPersonId = async (personId: string) => {
   try {
-    const response = await http.get(`/persons/${personId}/encounters`);
+    const response = await http.get(`v1/person/${personId}/encounters`);
     const parsed = EncounterListSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error(parsed.error);
@@ -36,6 +36,6 @@ const getByPersonId = async (personId: string) => {
 };
 
 export const encountersApi = {
-  create,
+  createEncounter,
   getByPersonId,
 };

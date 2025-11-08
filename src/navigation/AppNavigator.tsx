@@ -5,6 +5,7 @@ import MainTabs from './MainTabs';
 import { useAuthStore } from '@/store/useAuthStore';
 import SplashScreen from '@/modules/auth/ui/SplashScreen';
 import { PeopleDetailScreen } from '@/modules/peoples/ui/PeopleDetailsScreen';
+import EncounterFormScreen from '@/modules/encounters/ui/EncounterFormScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function AppNavigator() {
         <>
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="PersonDetails" component={PeopleDetailScreen} />
+          <Stack.Screen name="EncounterForm" component={EncounterFormScreen} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={LoginScreen} />

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { usePeopleStore } from '../store/usePeopleStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '@/store/useAuthStore';
 
 import Screen from '@/components/ui/Screen';
 import Button from '@/components/ui/Button';
@@ -63,6 +64,8 @@ export function PeopleListScreen({ navigation }: any) {
     );
   };
 
+  const logout = useAuthStore((s) => s.logout);
+
   return (
     <Screen scroll={false}>
       <View className="flex h-32 flex-row items-center justify-between  bg-secondary px-4">
@@ -70,8 +73,13 @@ export function PeopleListScreen({ navigation }: any) {
           <Text className=" text-2xl font-extrabold text-text">Machcare</Text>
           <Text className="text-text">Saúde da familia</Text>
         </View>
-        <TouchableHighlight className="flex  h-16 w-16 items-center justify-center rounded-full bg-surface">
-          <Ionicons name="person-outline" size={20} color={'white'} />
+        <TouchableHighlight
+          className="flex  h-16 w-16 items-center justify-center rounded-full bg-surface"
+          onPress={() => {
+            logout();
+          }}
+        >
+          <Ionicons name="log-out-outline" size={20} color={'white'} />
         </TouchableHighlight>
       </View>
       <View className="flex-1">

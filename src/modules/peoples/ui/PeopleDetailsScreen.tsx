@@ -7,10 +7,14 @@ import { Ionicons } from '@expo/vector-icons';
 type Tab = 'encounters' | 'prescriptions' | 'medications' | 'attachments';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useEncounter } from '@/modules/encounters/hooks/useEncounter';
+import { FlatList } from 'react-native-gesture-handler';
+import Card from '@/components/ui/Card';
 export function PeopleDetailScreen({ route }: any) {
   const { id } = route.params;
   const navigation = useNavigation<any>();
   const { list, fetchPeople } = usePeopleStore();
+  const { encounters, loading } = useEncounter(id);
   const [tab, setTab] = useState<Tab>('encounters');
 
   const person = list.find((p) => p.id === id);
@@ -18,6 +22,8 @@ export function PeopleDetailScreen({ route }: any) {
   useEffect(() => {
     if (!person) fetchPeople();
   }, []);
+
+  // encounters are fetched by the useEncounter hook (react-query). No direct store requests.
 
   if (!person) {
     return (
@@ -33,7 +39,8 @@ export function PeopleDetailScreen({ route }: any) {
     ? Math.floor((Date.now() - new Date(person.birthDate).getTime()) / 31557600000)
     : '-';
 
-  const formatted = (raw:string)=> format(new Date(raw), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const formatted = (raw: string) =>
+    format(new Date(raw), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 
   return (
     <Screen>
@@ -121,34 +128,28 @@ export function PeopleDetailScreen({ route }: any) {
 
         {/* === Conteúdo dinâmico da Tab === */}
         {tab === 'encounters' && (
-          <View>
+          <View className="gap-4">
             <Button
               title="+ Add Medical Encounter"
               onPress={() => navigation.navigate('EncounterForm', { personId: id })}
             />
 
             {/* cards simulados */}
-            <View className="mt-4 rounded-xl bg-slate-700 p-4">
-              <Text className="font-semibold text-white">Annual Checkup</Text>
-              <Text className="mt-1 text-sm text-gray-300">2023-10-15</Text>
-              <Text className="mt-1 text-sm text-gray-400">
-                Doctor: Dr. Williams • Central Medical Clinic
-              </Text>
-              <Text className="mt-2 text-xs text-gray-400">
-                Patient reports feeling well. Blood pressure slightly elevated.
-              </Text>
-            </View>
-
-            <View className="mt-3 rounded-xl bg-slate-700 p-4">
-              <Text className="font-semibold text-white">Follow-up Visit</Text>
-              <Text className="mt-1 text-sm text-gray-300">2023-08-22</Text>
-              <Text className="mt-1 text-sm text-gray-400">
-                Doctor: Dr. Johnson • City General Hospital
-              </Text>
-              <Text className="mt-2 text-xs text-gray-400">
-                Monitoring diabetes medication effectiveness.
-              </Text>
-            </View>
+            <FlatList
+              refreshing={loading}
+              data={encounters}
+              keyExtractor={(i) => i.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity key={item.id.toString()} onPress={() => console.log('navega para detalhes da consulta')}>
+                  <Card className=" gap-2 rounded-xl">
+                    <Text className="font-semibold text-white">{item.type}</Text>
+                    <Text className="mt-1 text-sm text-gray-300">{item.occurredAt}</Text>
+                    <Text className="mt-2 text-xs text-gray-400">{item.reason} </Text>
+                    <Text className="mt-1 text-sm text-gray-400">{item.notes}</Text>
+                  </Card>
+                </TouchableOpacity>
+              )}
+            />
           </View>
         )}
 
