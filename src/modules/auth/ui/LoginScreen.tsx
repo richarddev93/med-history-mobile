@@ -1,10 +1,12 @@
 import { Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useAuthVM } from '../vm/useAuthVM';
 import Screen from '@/components/ui/Screen';
 import Button from '@/components/ui/Button';
 
 export default function LoginScreen() {
   const vm = useAuthVM();
+  const error = useAuthStore((s) => s.error);
 
   return (
     <Screen className="px-8 justify-center" scroll={false}>
@@ -60,6 +62,9 @@ export default function LoginScreen() {
           className="bg-primary"
           loading={vm.loading}
         />
+        {error ? (
+          <Text className="mt-2 text-center text-red-500">{error}</Text>
+        ) : null}
       </View>
 
       {/* Divider */}

@@ -47,7 +47,7 @@ export function PeopleDetailScreen({ route }: any) {
     format(new Date(raw), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 
   return (
-    <Screen>
+    <Screen scroll={false}>
       <View className="flex h-auto max-h-56 justify-between  bg-secondary">
         {/* Header */}
         <View className="flex-row items-center px-4 py-3">
