@@ -38,4 +38,13 @@ const getByPersonId = async (personId: string) => {
 export const encountersApi = {
   createEncounter,
   getByPersonId,
+  deleteEncounter: async (id: string) => {
+    try {
+      await http.delete(`/v1/encounter/${id}`);
+      return true;
+    } catch (error: any) {
+      console.error('Delete encounter error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Delete encounter failed');
+    }
+  },
 };

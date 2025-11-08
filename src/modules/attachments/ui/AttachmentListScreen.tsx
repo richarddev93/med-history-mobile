@@ -1,8 +1,9 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useAttachmentsVM } from '../vm/useAttachmentsVM';
+import FAB from '@/components/ui/FAB';
 
 export function AttachmentListScreen({ route }: any) {
   const { personId } = route.params;
@@ -28,11 +29,12 @@ export function AttachmentListScreen({ route }: any) {
   };
 
   return (
-    <View>
-      <Text>Anexos</Text>
-      <Button title="Adicionar Anexo" onPress={handlePickDocument} />
-      {loading && <Text>Loading...</Text>}
-      {error && <Text>{error}</Text>}
+    <View style={{ flex: 1 }}>
+      <View style={{ padding: 12 }}>
+        <Text className="text-lg text-white">Anexos</Text>
+        {loading && <Text>Loading...</Text>}
+        {error && <Text>{error}</Text>}
+      </View>
       <FlatList
         data={attachments}
         keyExtractor={(item) => item.id}
@@ -45,6 +47,7 @@ export function AttachmentListScreen({ route }: any) {
           </View>
         )}
       />
+      <FAB onPress={handlePickDocument} />
     </View>
   );
 }

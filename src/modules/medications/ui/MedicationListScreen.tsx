@@ -1,7 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, Button, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { useMedicationsVM } from '../vm/useMedicationsVM';
+import FAB from '@/components/ui/FAB';
 
 export function MedicationListScreen({ navigation, route }: any) {
   const { personId } = route.params;
@@ -12,7 +13,7 @@ export function MedicationListScreen({ navigation, route }: any) {
   }, [personId, getAllByPerson]);
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Text>Medication List Screen</Text>
       {loading && <Text>Loading...</Text>}
       {error && <Text>{error}</Text>}
@@ -21,7 +22,7 @@ export function MedicationListScreen({ navigation, route }: any) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <Text>{item.name}</Text>}
       />
-      <Button title="Novo" onPress={() => navigation.navigate('MedicationForm', { personId })} />
+      <FAB onPress={() => navigation.navigate('MedicationForm', { personId })} />
     </View>
   );
 }

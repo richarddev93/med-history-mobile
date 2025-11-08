@@ -1,7 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, Button } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { useMedicationsVM } from '../vm/useMedicationsVM';
+import FAB from '@/components/ui/FAB';
 
 export function PersonMedicationListScreen({ route, navigation }: any) {
   const { personId } = route.params;
@@ -26,7 +27,7 @@ export function PersonMedicationListScreen({ route, navigation }: any) {
           </View>
         )}
       />
-      <Button title="Add Medication" onPress={() => navigation.navigate('MedicationForm', { personId })} />
+      <FAB onPress={() => navigation.navigate('MedicationForm', { personId })} />
     </View>
   );
 }

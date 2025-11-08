@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, TouchableHighlight } from 'react-native';
-import { Screen, Button } from '@/components/ui';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Screen } from '@/components/ui';
+import FAB from '@/components/ui/FAB';
+import Avatar from '@/components/ui/Avatar';
 import { useNavigation } from '@react-navigation/native';
 import { usePeopleStore } from '@/modules/peoples/store/usePeopleStore';
+import { peoplesApi } from '@/modules/peoples/data/peoples.api';
 import { Ionicons } from '@expo/vector-icons';
-type Tab = 'encounters' | 'prescriptions' | 'medications' | 'attachments';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEncounter } from '@/modules/encounters/hooks/useEncounter';
-import { FlatList } from 'react-native-gesture-handler';
-import Card from '@/components/ui/Card';
+import EncounterList from '@/modules/encounters/ui/EncounterList';
+
+type Tab = 'encounters' | 'prescriptions' | 'medications' | 'attachments';
 export function PeopleDetailScreen({ route }: any) {
   const { id } = route.params;
   const navigation = useNavigation<any>();
   const { list, fetchPeople } = usePeopleStore();
-  const { encounters, loading } = useEncounter(id);
+  const [deleting, setDeleting] = useState(false);
+  const { encounters, loading, refetch, deleteEncounter } = useEncounter(id);
   const [tab, setTab] = useState<Tab>('encounters');
 
   const person = list.find((p) => p.id === id);
 
   useEffect(() => {
     if (!person) fetchPeople();
-  }, []);
+  }, [person, fetchPeople]);
 
   // encounters are fetched by the useEncounter hook (react-query). No direct store requests.
 
@@ -55,12 +59,9 @@ export function PeopleDetailScreen({ route }: any) {
 
         {/* person detail */}
         <View className="flex-row items-center  p-4 pb-0">
-          <Image
-            source={{
-              uri: 'https://cdn-icons-png.flaticon.com/512/921/921071.png',
-            }}
-            className="mr-4 h-16 w-16 rounded-full"
-          />
+          <View className="mr-4">
+            <Avatar name={person.fullname} size={64} />
+          </View>
           <View className="flex-1">
             <Text className="text-lg font-semibold text-white">{person.fullname}</Text>
             <Text className="text-gray-300">
@@ -73,6 +74,39 @@ export function PeopleDetailScreen({ route }: any) {
           </View>
           <TouchableOpacity className="p-2">
             <Ionicons name="arrow-up-right-box-outline" size={20} color={'white'} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="p-2"
+            onPress={() => {
+              Alert.alert('Confirmar exclusão', 'Deseja excluir esta pessoa?', [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                  text: 'Excluir',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      setDeleting(true);
+                      await peoplesApi.delete(id);
+                      // refresh people list in the store
+                      await fetchPeople();
+                      navigation.goBack();
+                    } catch (err) {
+                      console.error('Erro ao deletar pessoa:', err);
+                      Alert.alert('Erro', 'Não foi possível deletar a pessoa.');
+                    } finally {
+                      setDeleting(false);
+                    }
+                  },
+                },
+              ]);
+            }}
+            disabled={deleting}
+          >
+            {deleting ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Ionicons name="trash" size={20} color={'white'} />
+            )}
           </TouchableOpacity>
         </View>
         <View className="m-4 flex-row flex-wrap gap-2">
@@ -129,62 +163,43 @@ export function PeopleDetailScreen({ route }: any) {
         {/* === Conteúdo dinâmico da Tab === */}
         {tab === 'encounters' && (
           <View className="gap-4">
-            <Button
-              title="+ Add Medical Encounter"
-              onPress={() => navigation.navigate('EncounterForm', { personId: id })}
-            />
-
-            {/* cards simulados */}
-            <FlatList
-              refreshing={loading}
-              data={encounters}
-              keyExtractor={(i) => i.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity key={item.id.toString()} onPress={() => console.log('navega para detalhes da consulta')}>
-                  <Card className=" gap-2 rounded-xl">
-                    <Text className="font-semibold text-white">{item.type}</Text>
-                    <Text className="mt-1 text-sm text-gray-300">{item.occurredAt}</Text>
-                    <Text className="mt-2 text-xs text-gray-400">{item.reason} </Text>
-                    <Text className="mt-1 text-sm text-gray-400">{item.notes}</Text>
-                  </Card>
-                </TouchableOpacity>
-              )}
+            <EncounterList
+              encounters={encounters}
+              loading={loading}
+              onRefetch={refetch}
+              onDelete={deleteEncounter}
+              onOpen={(item) => navigation.navigate('EncounterDetail', { encounterId: item.id, encounter: item })}
             />
           </View>
         )}
 
         {tab === 'prescriptions' && (
           <View>
-            <Button
-              title="+ New Prescription"
-              onPress={() => navigation.navigate('PrescriptionForm', { personId: id })}
-            />
             <Text className="mt-3 text-gray-400">Prescriptions list coming soon...</Text>
           </View>
         )}
 
         {tab === 'medications' && (
           <View>
-            <Button
-              title="+ Add Medication"
-              onPress={() => navigation.navigate('MedicationForm', { personId: id })}
-            />
-            <Text className="mt-3 text-gray-400">
-              Continuous medication tracking coming soon...
-            </Text>
+            <Text className="mt-3 text-gray-400">Continuous medication tracking coming soon...</Text>
           </View>
         )}
 
         {tab === 'attachments' && (
           <View>
-            <Button
-              title="+ Upload Attachment"
-              onPress={() => navigation.navigate('AttachmentUpload', { personId: id })}
-            />
             <Text className="mt-3 text-gray-400">Attachments list coming soon...</Text>
           </View>
         )}
       </ScrollView>
+      {/* FAB - actions vary by tab */}
+      <FAB
+        onPress={() => {
+          if (tab === 'encounters') return navigation.navigate('EncounterForm', { personId: id });
+          if (tab === 'prescriptions') return navigation.navigate('PrescriptionForm', { personId: id });
+          if (tab === 'medications') return navigation.navigate('MedicationForm', { personId: id });
+          if (tab === 'attachments') return navigation.navigate('AttachmentUpload', { personId: id });
+        }}
+      />
     </Screen>
   );
 }

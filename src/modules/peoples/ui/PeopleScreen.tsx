@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   TouchableOpacity,
   TouchableHighlight,
   TextInput,
@@ -13,27 +12,41 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/useAuthStore';
 
 import Screen from '@/components/ui/Screen';
-import Button from '@/components/ui/Button';
+import FAB from '@/components/ui/FAB';
 import Card from '@/components/ui/Card';
+import Avatar from '@/components/ui/Avatar';
 
 export function PeopleListScreen({ navigation }: any) {
   const { list, loading, fetchPeople } = usePeopleStore();
+  const [error, setError] = React.useState<string | null>(null);
+
+  const getPeopleList = useCallback(async () => {
+    try {
+      await fetchPeople();
+      setError(null);
+    } catch {
+      setError('Erro ao buscar pessoas');
+    }
+  }, [fetchPeople]);
 
   useEffect(() => {
     getPeopleList();
-  }, []);
-
-  const getPeopleList = useCallback(() => {
-    fetchPeople();
-  }, [fetchPeople]);
+  }, [getPeopleList]);
 
   const renderPeople = () => {
-    if (!loading && list.length <= 0) {
+    if (error) {
       return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => { setError(null); getPeopleList(); }}>
           <Ionicons name="reload-circle" size={20} color={'white'} />
           <Text>Tente novamente</Text>
         </TouchableOpacity>
+      );
+    }
+    if (!loading && list.length <= 0) {
+      return (
+        <View className="items-center justify-center mt-8">
+          <Text className="text-gray-400">Nenhuma pessoa encontrada.</Text>
+        </View>
       );
     }
     return (
@@ -46,11 +59,7 @@ export function PeopleListScreen({ navigation }: any) {
           <TouchableOpacity onPress={() => navigation.navigate('PersonDetails', { id: item.id })}>
             <Card className="mx-4 flex-row items-center gap-2">
               <View className="items-center rounded-full">
-                <Image
-                  source={require('../../../../assets/logo_horizontal.png')}
-                  className="h-16 w-16 rounded-full"
-                  resizeMode="cover"
-                />
+                <Avatar name={item.fullname} size={56} />
               </View>
               <View className="flex-1 items-start ">
                 <Text className="text-xl font-bold text-text">{item.fullname}</Text>
@@ -89,9 +98,10 @@ export function PeopleListScreen({ navigation }: any) {
             placeholder="Buscar..."
             placeholderTextColor="#95A5A6"
           />
-          <Button title="Adicionar membro" className="h-16" />
         </View>
         {renderPeople()}
+        {/* Floating Add button */}
+        <FAB onPress={() => navigation.navigate('PeopleForm')} />
 {/* 
         <FlatList
           refreshing={loading}

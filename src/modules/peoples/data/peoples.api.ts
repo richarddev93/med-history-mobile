@@ -13,8 +13,8 @@ export const peoplesApi = {
   async getAll() {
     try {
       const response = await http.get(ENDPOINT);
+      console.log('Response data:', ENDPOINT, response.data);      
       const parsed = PersonListSchema.safeParse(response.data);
-
       if (!parsed.success) {
         console.error(parsed.error);
         throw new Error('Formato inesperado da resposta do servidor');
@@ -62,6 +62,15 @@ export const peoplesApi = {
       if (error instanceof Error)
         console.error('Erro ao criar pessoa:', error.message);
       throw new Error('Falha ao criar pessoa');
+    }
+  },
+  async delete(id: string) {
+    try {
+      await http.delete(`${ENDPOINT}/${id}`);
+      return true;
+    } catch (error: unknown) {
+      if (error instanceof Error) console.error('Erro ao deletar pessoa:', error.message);
+      throw new Error('Falha ao deletar pessoa');
     }
   },
 };

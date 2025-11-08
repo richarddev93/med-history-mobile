@@ -23,6 +23,37 @@ export const useEncounter = (personId: string) => {
     },
   });
 
+  const deleteMutation = useMutation<boolean, unknown, string>({
+    mutationFn: async (id: string) => {
+      return await encountersApi.deleteEncounter(id);
+    },
+    onMutate: async (id: string) => {
+      // cancel outgoing queries
+      await queryClient.cancelQueries({ queryKey: ['encounters', personId] });
+      const previous = queryClient.getQueryData<Encounter[]>(['encounters', personId]);
+
+      // optimistically update cache and store
+      if (previous) {
+        const next = previous.filter((e) => e.id !== id);
+        queryClient.setQueryData(['encounters', personId], next);
+        setEncounters(next);
+      }
+
+      return { previous };
+    },
+    onError: (err, id, context: any) => {
+      // rollback
+      if (context?.previous) {
+        queryClient.setQueryData(['encounters', personId], context.previous);
+        setEncounters(context.previous as Encounter[]);
+      }
+      console.error('Error deleting encounter:', err);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['encounters', personId] });
+    },
+  });
+
   const encounterQuery = useQuery({
     queryKey: ['encounters', personId],
     queryFn: () => encountersApi.getByPersonId(personId),
@@ -46,5 +77,9 @@ export const useEncounter = (personId: string) => {
     loading,
     encounterMutate,
     refetch: encounterQuery.refetch,
+    deleteEncounter: (id: string) => {
+      // call delete mutation (optimistic update handled in mutation)
+      deleteMutation.mutate(id);
+    },
   };
 }

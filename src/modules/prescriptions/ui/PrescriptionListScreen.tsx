@@ -1,7 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, Button, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { usePrescriptionsVM } from '../vm/usePrescriptionsVM';
+import FAB from '@/components/ui/FAB';
 
 export function PrescriptionListScreen({ navigation }: any) {
   const { prescriptions, loading, error, getAll } = usePrescriptionsVM();
@@ -20,8 +21,7 @@ export function PrescriptionListScreen({ navigation }: any) {
   );
 
   return (
-    <View>
-      <Button title="Create New Prescription" onPress={() => navigation.navigate('PrescriptionForm')} />
+    <View style={{ flex: 1 }}>
       {loading && <Text>Loading...</Text>}
       {error && <Text>Error: {error}</Text>}
       <FlatList
@@ -29,6 +29,7 @@ export function PrescriptionListScreen({ navigation }: any) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+      <FAB onPress={() => navigation.navigate('PrescriptionForm')} />
     </View>
   );
 }
