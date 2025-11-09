@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Linking } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useAttachmentsVM } from '../vm/useAttachmentsVM';
 import FAB from '@/components/ui/FAB';
@@ -40,7 +40,21 @@ export function AttachmentListScreen({ route }: any) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-            <Text>{item.fileName}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: 'bold' }}>{item.filename || item.fileName}</Text>
+              <Text style={{ fontSize: 12, color: '#aaa' }}>{item.mimeType}</Text>
+              <Text style={{ fontSize: 12, color: '#aaa' }}>{item.sizeBytes ? `${(item.sizeBytes/1024).toFixed(1)} KB` : ''}</Text>
+              {item.createdAt && <Text style={{ fontSize: 12, color: '#aaa' }}>{new Date(item.createdAt).toLocaleString()}</Text>}
+            </View>
+            <TouchableOpacity onPress={() => {
+              if (item.url) {
+                Linking.openURL(item.url);
+              } else {
+                alert('URL do arquivo não disponível');
+              }
+            }}>
+              <Text style={{ color: 'blue', marginRight: 12 }}>Abrir</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteAttachment(item.id)}>
               <Text style={{ color: 'red' }}>Remover</Text>
             </TouchableOpacity>

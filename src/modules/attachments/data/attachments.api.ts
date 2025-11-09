@@ -1,36 +1,42 @@
+const remove = async (id: string) => {
+  try {
+    await http.delete(`/api/attachments/${id}`);
+    return true;
+  } catch (error: any) {
+    console.error('Delete attachment error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Delete attachment failed');
+  }
+};
 
 import { api } from '@/lib/api';
 import { AttachmentListSchema, AttachmentSchema } from '../schemas/attachments.schema';
 
-const getAllByPerson = async (personId: string) => {
-  const response = await api.get(`/persons/${personId}/attachments`);
-  return AttachmentListSchema.parse(response.data);
+import { http } from '@/lib/http';
+
+const listByEncounter = async (encounterId: string) => {
+  const response = await http.get(`/api/attachments/list/encounter/${encounterId}`);
+  return response.data;
 };
 
-const create = async (personId: string, file: any) => {
-  const formData = new FormData();
-
-  formData.append('file', {
-    uri: file.uri,
-    name: file.name,
-    type: file.mimeType || 'application/octet-stream',
-  } as any);
-
-  const response = await api.post(`/persons/${personId}/attachments`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return AttachmentSchema.parse(response.data);
+const presign = async (userId: string, data: any) => {
+  const response = await http.post(`/api/attachments/presign/${userId}`, data);
+  return response.data;
 };
 
-const remove = async (attachmentId: string) => {
-  await api.delete(`/attachments/${attachmentId}`);
+const confirm = async (userId: string, data: any) => {
+  const response = await http.post(`/api/attachments/confirm/${userId}`, data);
+  return response.data;
+};
+
+const listPending = async (params: any) => {
+  const response = await http.get('/api/attachments/list/pending', { params });
+  return response.data;
 };
 
 export const attachmentsApi = {
-  getAllByPerson,
-  create,
+  listByEncounter,
+  presign,
+  confirm,
+  listPending,
   remove,
 };

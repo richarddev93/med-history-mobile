@@ -1,5 +1,5 @@
 
-import { http } from '@/lib/http';
+import { http } from '../../../lib/http';
 import {
   LoginData,
   LoginResponseSchema,
@@ -7,12 +7,15 @@ import {
   TokenSchema,
   RegisterData,
   MeSchema,
-} from '@/schemas/auth.schema';
+} from '../../../schemas/auth.schema';
 import { AxiosError } from 'axios';
 
 const register = async (data: RegisterData) => {
   try {
     const response = await http.post('/auth/register', data);
+    if (!response || !response.data) {
+      throw new Error('Resposta da API de login está vazia ou inválida');
+    }
     const parsed = LoginResponseSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error(parsed.error);

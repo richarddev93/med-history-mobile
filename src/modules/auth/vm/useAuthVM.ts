@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { authApi } from '../data/auth.api';
-import { LoginResponse, LoginSchema } from '@/schemas/auth.schema';
+import { LoginResponseData, LoginDataSchema } from '@/schemas/auth.schema';
 import { useMutation } from '@tanstack/react-query';
 
 export function useAuthVM() {
@@ -13,7 +13,7 @@ export function useAuthVM() {
 
   const loginMutation = useMutation({
     mutationFn: authApi.login,
-    onSuccess: (data: LoginResponse) => {
+    onSuccess: (data: LoginResponseData) => {
       login(data.user, { accessToken: data.accessToken, refreshToken: data.refreshToken });
     },
     onError: (error: any) => {
@@ -24,7 +24,8 @@ export function useAuthVM() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const parsed = LoginSchema.safeParse({ email, password });
+      const parsed = LoginDataSchema.safeParse({ email, password });
+      console.log("parsed", parsed)
       if (!parsed.success) {
         setError(parsed.error.message);
         return;

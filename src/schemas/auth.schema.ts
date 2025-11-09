@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
-  name: z.string().optional(),
+  name: z.string().min(2).max(100),
 });
 
 export const LoginResponseSchema = z.object({
@@ -44,3 +44,4 @@ export const RefreshSessionDataSchema = z.object({
 export type LoginData = z.infer<typeof LoginDataSchema>;
 export type RegisterData = z.infer<typeof RegisterDataSchema>;
 export type RefreshSessionData = z.infer<typeof RefreshSessionDataSchema>;
+export type LoginResponseData = z.infer<typeof LoginResponseSchema>;

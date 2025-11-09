@@ -21,6 +21,7 @@
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
     "expo": "^54.0.0",
+    "expo-dev-client": "~6.0.17",
     "expo-document-picker": "^14.0.7",
     "expo-status-bar": "~3.0.8",
     "nativewind": "latest",
@@ -49,6 +50,5 @@
     "typescript": "~5.9.2"
   },
   "main": "node_modules/expo/AppEntry.js",
-  "packageManager": "yarn@4.10.3",
   "private": true
 }

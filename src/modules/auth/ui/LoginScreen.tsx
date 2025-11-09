@@ -48,7 +48,7 @@ export default function LoginScreen() {
             onChangeText={vm.setPassword}
           />
           <TouchableOpacity className="mt-2">
-            <Text className="text-right text-sm text-primary">Forgot Password?</Text>
+            <Text className="text-right text-sm text-primary">Forgot Password??</Text>
           </TouchableOpacity>
         </View>
       </View>
