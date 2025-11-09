@@ -5,6 +5,7 @@ import {
   CreatePersonSchema,
   PersonListSchema,
   PersonSchema,
+  UpdatePersonData,
 } from '@/schemas/peoples.schema';
 
 

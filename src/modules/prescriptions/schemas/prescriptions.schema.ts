@@ -14,12 +14,12 @@ export const PrescriptionItemSchema = z.object({
 
 export const PrescriptionSchema = z.object({
   id: z.string(),
-  patientId: z.string(),
+  personId: z.string(),
   items: z.array(PrescriptionItemSchema).optional(),
 });
 
 export const CreatePrescriptionSchema = z.object({
-  patientId: z.string(),
+  personId: z.string(),
 });
 
 export const AddPrescriptionItemSchema = z.object({
@@ -35,3 +35,4 @@ export const AddPrescriptionItemSchema = z.object({
 export type Prescription = z.infer<typeof PrescriptionSchema>;
 export type CreatePrescriptionData = z.infer<typeof CreatePrescriptionSchema>;
 export type AddPrescriptionItemData = z.infer<typeof AddPrescriptionItemSchema>;
+export type PrescriptionItem = z.infer<typeof PrescriptionItemSchema>;

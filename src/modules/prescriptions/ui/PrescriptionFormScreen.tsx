@@ -20,6 +20,7 @@ export function PrescriptionFormScreen({ navigation }: any) {
   };
 
   return (
+<<<<<<< Updated upstream
     <View style={{ flex: 1, padding: 20 }}>
       <Text style={{ fontSize: 24, marginBottom: 20 }}>New Prescription</Text>
       <TextInput
@@ -48,6 +49,66 @@ export function PrescriptionFormScreen({ navigation }: any) {
       <Button title="Save Prescription" onPress={handleSave} disabled={loading || !personId || !selectedEncounterId} />
       {loading && <Text>Saving...</Text>}
       {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
+=======
+    <View style={styles.container}>
+      <Text style={styles.title}>Nova Prescrição</Text>
+
+      <View style={styles.section}>
+        <Button title="Adicionar Medicamento" onPress={() => navigation.navigate('PrescriptionItemForm')} />
+        <FlatList
+          data={items}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => <Text style={styles.listItem}>{item.name}</Text>}
+          ListEmptyComponent={<Text style={styles.emptyText}>Nenhum medicamento adicionado.</Text>}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Button title="Adicionar Anexo" onPress={() => navigation.navigate('AttachmentUpload')} />
+        <FlatList
+          data={attachments}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => <Text style={styles.listItem}>{item.name}</Text>}
+          ListEmptyComponent={<Text style={styles.emptyText}>Nenhum anexo adicionado.</Text>}
+        />
+      </View>
+
+      <View style={styles.footer}>
+        <Button title="Salvar Prescrição" onPress={handleSave} disabled={loading} />
+        {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      </View>
+>>>>>>> Stashed changes
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f9f9f9',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  listItem: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 10,
+  },
+  footer: {
+    marginTop: 'auto',
+  },
+});
