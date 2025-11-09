@@ -1,12 +1,3 @@
-const remove = async (id: string) => {
-  try {
-    await http.delete(`/api/v1/prescriptions/${id}`);
-    return true;
-  } catch (error: any) {
-    console.error('Delete prescription error:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Delete prescription failed');
-  }
-};
 
 import { http } from '../../../lib/http';
 import {
@@ -35,7 +26,7 @@ const getAll = async () => {
 
 const getByPersonId = async (personId: string) => {
   try {
-    const response = await http.get(`/api/v1/person/${personId}/prescriptions`);
+    const response = await http.get(`/persons/${personId}/prescriptions`);
     const parsed = PrescriptionListSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Erro de Zod em getByPersonId:', parsed.error);
@@ -50,7 +41,7 @@ const getByPersonId = async (personId: string) => {
 
 const create = async (data: CreatePrescriptionData) => {
   try {
-    const response = await http.post('/api/v1/prescriptions', data);
+    const response = await http.post('/prescriptions', data);
     const parsed = PrescriptionSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Erro de Zod em create:', parsed.error);
@@ -65,7 +56,7 @@ const create = async (data: CreatePrescriptionData) => {
 
 const getById = async (id: string) => {
   try {
-    const response = await http.get(`/api/v1/prescriptions/${id}`);
+    const response = await http.get(`/prescriptions/${id}`);
     const parsed = PrescriptionSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Erro de Zod em getById:', parsed.error);
@@ -80,7 +71,7 @@ const getById = async (id: string) => {
 
 const addItem = async (prescriptionId: string, item: AddPrescriptionItemData) => {
   try {
-    const response = await http.post(`/api/v1/prescriptions/${prescriptionId}/items`, item);
+    const response = await http.post(`/prescriptions/${prescriptionId}/items`, item);
     const parsed = PrescriptionSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Erro de Zod em addItem:', parsed.error);
@@ -92,6 +83,16 @@ const addItem = async (prescriptionId: string, item: AddPrescriptionItemData) =>
     throw new Error(error.response?.data?.message || 'Falha ao adicionar item à prescrição.');
   }
 };
+
+const remove = async (id: string) => {
+    try {
+      await http.delete(`/prescriptions/${id}`);
+      return true;
+    } catch (error: any) {
+      console.error('Delete prescription error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Delete prescription failed');
+    }
+  };
 
 export const prescriptionsApi = {
   getAll,

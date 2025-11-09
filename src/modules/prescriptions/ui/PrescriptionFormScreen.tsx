@@ -1,55 +1,44 @@
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { usePrescriptionsVM } from '../vm/usePrescriptionsVM';
-import { useEncounter } from '@/modules/encounters/hooks/useEncounter';
+import { CreateMedication } from '../../medications/schemas/medications.schema';
 
-
-export function PrescriptionFormScreen({ navigation }: any) {
-
-  const [personId, setPersonId] = useState('');
-  const [selectedEncounterId, setSelectedEncounterId] = useState('');
+export function PrescriptionFormScreen({ route }: any) {
+  const navigation = useNavigation();
+  const { personId } = route.params;
   const { create, loading, error } = usePrescriptionsVM();
-  const { encounters } = useEncounter(personId);
+  const [items, setItems] = useState<CreateMedication[]>([]);
+  const [attachments, setAttachments] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (route.params?.item) {
+      setItems((prev) => [...prev, route.params.item]);
+    }
+    if (route.params?.attachment) {
+      setAttachments((prev) => [...prev, route.params.attachment]);
+    }
+  }, [route.params?.item, route.params?.attachment]);
 
   const handleSave = async () => {
-    await create({ personId, encounterId: selectedEncounterId });
-    if (navigation && typeof navigation.goBack === 'function') {
-      navigation.goBack();
+    if (items.length === 0) {
+      Alert.alert('Nenhum item', 'Adicione pelo menos um medicamento à prescrição.');
+      return;
+    }
+
+    await create({ personId, items, attachments });
+
+    if (!error) {
+      Alert.alert('Sucesso', 'Prescrição criada com sucesso!', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    } else {
+      Alert.alert('Erro', 'Não foi possível criar a prescrição.');
     }
   };
 
   return (
-<<<<<<< Updated upstream
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>New Prescription</Text>
-      <TextInput
-        placeholder="Person ID"
-        value={personId}
-        onChangeText={setPersonId}
-        style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 20 }}
-      />
-      {/* Encounter selection */}
-      {encounters.length > 0 && (
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ marginBottom: 8 }}>Select Encounter:</Text>
-          {encounters.map((enc) => (
-            <TouchableOpacity
-              key={enc.id}
-              style={{ padding: 10, backgroundColor: selectedEncounterId === enc.id ? '#007AFF' : '#eee', marginBottom: 6, borderRadius: 6 }}
-              onPress={() => setSelectedEncounterId(enc.id)}
-            >
-              <Text style={{ color: selectedEncounterId === enc.id ? 'white' : 'black' }}>
-                {enc.type} - {enc.occurredAt?.slice(0, 10)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-      <Button title="Save Prescription" onPress={handleSave} disabled={loading || !personId || !selectedEncounterId} />
-      {loading && <Text>Saving...</Text>}
-      {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
-=======
     <View style={styles.container}>
       <Text style={styles.title}>Nova Prescrição</Text>
 
@@ -77,7 +66,6 @@ export function PrescriptionFormScreen({ navigation }: any) {
         <Button title="Salvar Prescrição" onPress={handleSave} disabled={loading} />
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
       </View>
->>>>>>> Stashed changes
     </View>
   );
 }
