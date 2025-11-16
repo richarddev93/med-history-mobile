@@ -17,7 +17,7 @@ http.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const { tokens, logout, refreshSession } = useAuthStore.getState();
-
+    console.log('HTTP Interceptor caught an error:', error.response?.status, originalRequest._retry);
     if (error.response?.status === 401 && !originalRequest._retry && tokens?.refreshToken) {
       originalRequest._retry = true;
 

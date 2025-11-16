@@ -3,9 +3,10 @@ import { http } from '@/lib/http';
 import {
   CreatePersonData,
   CreatePersonSchema,
+  CreateUserPersonLinkData,
+  CreateUserPersonLinkSchema,
   PersonListSchema,
   PersonSchema,
-  UpdatePersonData,
 } from '@/schemas/peoples.schema';
 
 
@@ -65,6 +66,18 @@ export const peoplesApi = {
       throw new Error('Falha ao criar pessoa');
     }
   },
+
+  async link( userId: string, person: CreateUserPersonLinkData) {
+    try {
+      const body = CreateUserPersonLinkSchema.parse(person);
+      return await http.post(`${ENDPOINT}/${userId}/link`, body);
+    } catch (error: unknown) {
+      if (error instanceof Error)
+        console.error('Erro ao vincular usuário a pessoa:', error.message);
+      throw new Error('Falha ao vincular usuário a pessoa');
+    }
+  },
+
   async delete(id: string) {
     try {
       await http.delete(`${ENDPOINT}/${id}`);

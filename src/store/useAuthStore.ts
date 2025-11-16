@@ -34,7 +34,11 @@ export const useAuthStore = create<AuthState>(
         set({ user, tokens, loading: false });
         await AsyncStorage.setItem('auth', JSON.stringify({ user, tokens }));
       },
-      logout: () => set({ user: undefined, tokens: undefined }),
+      logout: async () => {
+        console.log('Logging out user', await AsyncStorage.getItem('auth'));
+        await AsyncStorage.removeItem('auth');
+        set({ user: undefined, tokens: undefined });
+      },
       refreshSession: async () => {
         const { user, tokens } = get();
         if (!user || !tokens?.refreshToken) return;

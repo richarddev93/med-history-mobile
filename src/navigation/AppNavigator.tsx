@@ -7,6 +7,8 @@ import SplashScreen from '@/modules/auth/ui/SplashScreen';
 import { PeopleDetailScreen } from '@/modules/peoples/ui/PeopleDetailsScreen';
 import EncounterFormScreen from '@/modules/encounters/ui/EncounterFormScreen';
 import EncounterDetailScreen from '@/modules/encounters/ui/EncounterDetailScreen';
+import { AttachmentUploadScreen } from '@/modules/attachments/ui/AttachmentUploadScreen';
+import { PrescriptionFormScreen } from '@/modules/prescriptions/ui/PrescriptionFormScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,9 @@ export default function AppNavigator() {
           <Stack.Screen name="PersonDetails" component={PeopleDetailScreen} />
           <Stack.Screen name="EncounterForm" component={EncounterFormScreen} />
           <Stack.Screen name="EncounterDetail" component={EncounterDetailScreen} />
+          <Stack.Screen name="AttachmentUpload" component={AttachmentUploadScreen} />
+          <Stack.Screen name="PrescriptionForm" component={PrescriptionFormScreen} />
+          <Stack.Screen name="PrescriptionItemForm" component={PrescriptionFormScreen} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={LoginScreen} />
