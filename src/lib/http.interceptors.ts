@@ -15,6 +15,7 @@ export const  setupHttpInterceptors= ()=> {
 http.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log('HTTP Interceptor response error:', error);
     const originalRequest = error.config;
     const { tokens, logout, refreshSession } = useAuthStore.getState();
     console.log('HTTP Interceptor caught an error:', error.response?.status, originalRequest._retry);

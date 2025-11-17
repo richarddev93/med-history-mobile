@@ -56,7 +56,7 @@ const create = async (data: CreatePrescriptionData) => {
 
 const getById = async (id: string) => {
   try {
-    const response = await http.get(`/prescriptions/${id}`);
+    const response = await http.get(`/v1/prescriptions/${id}`);
     const parsed = PrescriptionSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Erro de Zod em getById:', parsed.error);
@@ -69,15 +69,18 @@ const getById = async (id: string) => {
   }
 };
 
-const addItem = async (prescriptionId: string, item: AddPrescriptionItemData) => {
+const addItem = async (prescriptionId: string, items: AddPrescriptionItemData[]) => {
   try {
-    const response = await http.post(`/prescriptions/${prescriptionId}/items`, item);
-    const parsed = PrescriptionSchema.safeParse(response.data);
-    if (!parsed.success) {
-      console.error('Erro de Zod em addItem:', parsed.error);
-      throw new Error('Formato inesperado da resposta do servidor ao adicionar item.');
+    const response = await http.post(`/v1/prescriptions/${prescriptionId}/items`, items);
+    if (!response.status || response.status < 200 || response.status >= 300) {
+      throw new Error('Resposta vazia ao adicionar item à prescrição.');
     }
-    return parsed.data;
+    // const parsed = PrescriptionSchema.safeParse(response.data);
+    // if (!parsed.success) {
+    //   console.error('Erro de Zod em addItem:', parsed.error);
+    //   throw new Error('Formato inesperado da resposta do servidor ao adicionar item.');
+    // }
+    return response.data;
   } catch (error: any) {
     console.error('Erro ao adicionar item à prescrição:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Falha ao adicionar item à prescrição.');
@@ -86,7 +89,7 @@ const addItem = async (prescriptionId: string, item: AddPrescriptionItemData) =>
 
 const remove = async (id: string) => {
     try {
-      await http.delete(`/prescriptions/${id}`);
+      await http.delete(`/v1/prescriptions/${id}`);
       return true;
     } catch (error: any) {
       console.error('Delete prescription error:', error.response?.data || error.message);

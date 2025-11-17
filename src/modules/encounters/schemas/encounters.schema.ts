@@ -12,6 +12,8 @@ export const EncounterSchema = z.object({
   occurredAt: z.string(),
   reason: z.string().optional(),
   notes: z.string().optional(),
+  healthcareProvider: z.string().optional(),
+  Prescription: z.array(z.any()).optional(),
 });
 
 export const CreateEncounterSchema = z.object({

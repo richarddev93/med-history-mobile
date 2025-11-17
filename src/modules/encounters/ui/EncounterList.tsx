@@ -13,6 +13,8 @@ type Encounter = {
   occurredAt: string;
   reason?: string;
   notes?: string;
+  healthcareProvider?: string;
+  Prescription?: any[];
 };
 
 type Props = {
@@ -23,7 +25,8 @@ type Props = {
   onOpen?: (encounter: Encounter) => void;
 };
 
-const formatted = (raw: string) => format(new Date(raw), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+const formatted = (raw: string) =>
+  format(new Date(raw), "dd 'de' MMMM 'de' yyyy às hh:mm", { locale: ptBR });
 
 export default function EncounterList({ encounters, loading, onRefetch, onDelete, onOpen }: Props) {
   const [query, setQuery] = useState('');
@@ -64,6 +67,7 @@ export default function EncounterList({ encounters, loading, onRefetch, onDelete
     ]);
   };
 
+  console.log('Rendering EncounterList with', filtered[0].Prescription[0].items, 'items');
   return (
     <View>
       <View className="mb-3">
@@ -71,11 +75,13 @@ export default function EncounterList({ encounters, loading, onRefetch, onDelete
 
         <View className="flex-row items-center justify-between">
           <View style={{ flex: 1, marginRight: 8 }}>
-            <TouchableOpacity onPress={() => setTypeOpen((s) => !s)} className="bg-card px-3 py-3 rounded-md border border-[#1F2A3C]">
+            <TouchableOpacity
+              onPress={() => setTypeOpen((s) => !s)}
+              className="rounded-md border border-[#1F2A3C] bg-card px-3 py-3">
               <Text className="text-white">{filterType === 'ALL' ? 'All types' : filterType}</Text>
             </TouchableOpacity>
             {typeOpen && (
-              <View className="mt-2 rounded-md overflow-hidden border border-[#1F2A3C] bg-card">
+              <View className="mt-2 overflow-hidden rounded-md border border-[#1F2A3C] bg-card">
                 {['ALL', 'EMERGENCY', 'OUTPATIENT'].map((t) => (
                   <TouchableOpacity
                     key={t}
@@ -83,9 +89,11 @@ export default function EncounterList({ encounters, loading, onRefetch, onDelete
                       setFilterType(t as any);
                       setTypeOpen(false);
                     }}
-                    className="px-3 py-3"
-                  >
-                    <Text className={`text-sm ${filterType === t ? 'text-blue-400 font-semibold' : 'text-white'}`}>{t}</Text>
+                    className="px-3 py-3">
+                    <Text
+                      className={`text-sm ${filterType === t ? 'font-semibold text-blue-400' : 'text-white'}`}>
+                      {t}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -102,30 +110,53 @@ export default function EncounterList({ encounters, loading, onRefetch, onDelete
         </View>
       </View>
 
-        <FlatList
+      <FlatList
         data={filtered}
         refreshing={!!loading}
         onRefresh={onRefetch}
         keyExtractor={(i) => i.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => onOpen && onOpen(item)}>
-            <Card className="rounded-xl gap-2">
-              <View className="flex-row justify-between items-start">
-                <Text className="font-semibold text-white text-lg">{item.type}</Text>
+          <TouchableOpacity onPress={() => onOpen?.(item)}>
+            <Card className="gap-3 rounded-xl p-4">
+              {/* HEADER */}
+              <View className="flex-row items-start justify-between">
+                <Text className="text-lg font-semibold text-white">{item.type}</Text>
                 <Text className="text-sm text-gray-300">{formatted(item.occurredAt)}</Text>
               </View>
 
+              <View className="flex-row items-center gap-2">
+                <Ionicons name="medkit-outline" size={16} color="#8FA3BF" />
+                <Text className="text-sm text-gray-300">{'Santa casa'}</Text>
+              </View>
+
               {item.reason ? (
-                <View className="mt-3 rounded-md border-l-4 border-primary bg-primary/5 p-3">
+                <View className="mt-1 rounded-md border-l-4 border-primary bg-primary/5 p-3">
                   <Text className="text-base font-semibold text-white">{item.reason}</Text>
                 </View>
               ) : null}
 
-              {item.notes ? <Text className="mt-2 text-sm text-gray-400">{item.notes}</Text> : null}
+              {item.notes ? (
+                <Text className="text-sm text-gray-400">
+                  {item.notes.length > 120 ? item.notes.slice(0, 120) + '...' : item.notes}
+                </Text>
+              ) : null}
 
+              {item.Prescription &&
+                item.Prescription.length > 0 &&
+                item.Prescription[0].items.length > 0 &&
+                item.Prescription[0].items.map((p, i) => (
+                  <View className="mt-1 flex-row items-center gap-2" key={i}>
+                    <Ionicons name="list-circle-outline" size={18} color="#81A1FF" />
+                    <Text className="text-sm text-gray-300">
+                      {p.name} {p.doseValue} {p.doseUnit}
+                    </Text>
+                  </View>
+                ))}
+
+              {/* FOOTER ACTIONS */}
               <View className="mt-3 flex-row justify-end">
                 <TouchableOpacity onPress={() => confirmDelete(item.id)} className="px-3 py-2">
-                  <Ionicons name="trash-outline" size={20} color={'#FF6B6B'} />
+                  <Ionicons name="trash-outline" size={20} color="#FF6B6B" />
                 </TouchableOpacity>
               </View>
             </Card>
