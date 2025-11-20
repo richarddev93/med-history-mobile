@@ -67,7 +67,7 @@ export default function EncounterList({ encounters, loading, onRefetch, onDelete
     ]);
   };
 
-  console.log('Rendering EncounterList with', filtered[0].Prescription[0].items, 'items');
+  console.log('Rendering EncounterList with', filtered[0], 'items');
   return (
     <View>
       <View className="mb-3">
